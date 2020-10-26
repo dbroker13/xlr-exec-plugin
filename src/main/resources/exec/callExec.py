@@ -9,29 +9,24 @@
 #
 
 from java.lang import ClassLoader
-from java.io import InputStreamReader, BufferedReader, OutputStreamWriter, FileOutputStream
+from java.io import InputStreamReader, BufferedReader, OutputStreamWriter, FileOutputStream, File
 import java.lang.Byte
 import jarray
 import subprocess
 import os
 import array
+from org.apache.commons.io import IOUtils
 
 print "We are in python"
-inStream = ClassLoader.getSystemClassLoader().getResourceAsStream("exec/go/hello.go")
-reader = InputStreamReader(inStream)
+fileStream = File("output")
 
-fileStream = FileOutputStream("output.go")
-outputStream = OutputStreamWriter(fileStream);
-buffer = jarray.zeros(1024, "b")
-# buffer = byte(255) #[1024];
-noOfBytes = 1;
-while (buffer != -1):
-    buffer = reader.read()
-    if buffer != -1:
-        outputStream.write(buffer)#), 0, len(str(buffer)))
-outputStream.flush()
-outputStream.close()
-function_call = subprocess.Popen(["/usr/local/go/bin/go", "run", "output.go"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+inStream =  ClassLoader.getSystemClassLoader().getResourceAsStream("exec/go/hello")
+out = FileOutputStream(fileStream)
+IOUtils.copy(inStream, out)
+fileStream.setExecutable(True)
+out.flush()
+out.close()
+function_call = subprocess.Popen(["./output"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = function_call.stdout.read()
 print output
 # print(function_call)
